@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://bvpnynt0wo3dj"]
+
+[ext_resource type="PackedScene" uid="uid://esfka6b3l2vk" path="res://background.tscn" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://dsup4aq8lm6oe" path="res://Main.cs" id="1_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://bpdathvtosoyj" path="res://cat.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://b2fxruex5hmwg" path="res://box_spawner.tscn" id="5_lquwl"]
+[ext_resource type="Script" uid="uid://c3wib0ktcvyuq" path="res://Ground.cs" id="6_7mycd"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lquwl"]
+size = Vector2(1152, 6)
+
+[node name="Main" type="Node" unique_id=2110726817]
+script = ExtResource("1_1bvp3")
+
+[node name="Background" parent="." unique_id=889350867 instance=ExtResource("1_0xm2m")]
+
+[node name="Ground" type="StaticBody2D" parent="." unique_id=225612777 node_paths=PackedStringArray("PlayerCat")]
+position = Vector2(1, 642)
+scale = Vector2(2, 1)
+collision_layer = 4
+script = ExtResource("6_7mycd")
+PlayerCat = NodePath("../Cat")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=1621671410]
+position = Vector2(575, 3)
+shape = SubResource("RectangleShape2D_lquwl")
+
+[node name="Polygon2D" type="Polygon2D" parent="Ground" unique_id=735529270]
+color = Color(0.08235294, 0.39607844, 0.07058824, 1)
+polygon = PackedVector2Array(1151, 6, -1, 6, -1, 0, 1151, 0)
+
+[node name="Cat" parent="." unique_id=1406705623 instance=ExtResource("2_h2yge")]
+position = Vector2(573, 594)
+
+[node name="BoxSpawner" parent="Cat" unique_id=565771170 instance=ExtResource("5_lquwl")]
+position = Vector2(-576, -324)
+SpawnTopBoxes = true

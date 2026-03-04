@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bdd2v2msidcqr"]
+
+[ext_resource type="Texture2D" uid="uid://bywu3jbgl7ibl" path="res://assets/boxes_SpriteSheet.png" id="1_g2tbl"]
+[ext_resource type="Script" uid="uid://dr0h5kr8g715r" path="res://Box.cs" id="2_oq5cr"]
+[ext_resource type="Script" uid="uid://bk2qkkqhauknf" path="res://BoxSprite.cs" id="3_bqn3j"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_oq5cr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oq5cr"]
+atlas = ExtResource("1_g2tbl")
+region = Rect2(0, 0, 18, 18)
+
+[node name="Box" type="StaticBody2D" unique_id=796524382 groups=["boxes"]]
+scale = Vector2(6, 6)
+collision_layer = 2
+physics_material_override = SubResource("PhysicsMaterial_oq5cr")
+script = ExtResource("2_oq5cr")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=111285384]
+polygon = PackedVector2Array(-8, -5, 0, -9, 8, -5, 8, 5, 0, 9, -8, 5)
+
+[node name="BoxSprite" type="Sprite2D" parent="." unique_id=244387394]
+texture = SubResource("AtlasTexture_oq5cr")
+script = ExtResource("3_bqn3j")

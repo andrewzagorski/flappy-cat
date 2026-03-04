@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://cuqujwihpdgtw"]
+
+[ext_resource type="Script" uid="uid://b1oqadq8uqcj" path="res://ScoreZone.cs" id="1_k42b3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gss4k"]
+
+[node name="ScoreZone" type="Area2D" unique_id=306723739]
+collision_layer = 8
+script = ExtResource("1_k42b3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=651487561]
+shape = SubResource("RectangleShape2D_gss4k")
+
+[connection signal="body_entered" from="." to="." method="OnBodyEntered"]

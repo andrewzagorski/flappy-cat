@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://b2fxruex5hmwg"]
+
+[ext_resource type="Script" uid="uid://cpdkj8essu0yx" path="res://BoxSpawner.cs" id="1_poabq"]
+[ext_resource type="PackedScene" uid="uid://bdd2v2msidcqr" path="res://box.tscn" id="2_w51sw"]
+[ext_resource type="PackedScene" uid="uid://cuqujwihpdgtw" path="res://score_zone.tscn" id="3_iumfr"]
+
+[node name="BoxSpawner" type="Node2D" unique_id=1676689273]
+script = ExtResource("1_poabq")
+BoxScene = ExtResource("2_w51sw")
+ScoreZoneScene = ExtResource("3_iumfr")
+
+[node name="Timer" type="Timer" parent="." unique_id=648395521]
+wait_time = 6.0
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="OnTimerTimeout"]
