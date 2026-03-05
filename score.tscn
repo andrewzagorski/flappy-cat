@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://ctra4t72858ny"]
+
+[ext_resource type="Script" uid="uid://cdbdi2n64rbwy" path="res://Score.cs" id="1_t1x8i"]
+
+[node name="Score" type="Label" unique_id=483780834]
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 72
+text = "0"
+script = ExtResource("1_t1x8i")

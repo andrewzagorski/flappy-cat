@@ -13,4 +13,16 @@ public partial class Main : Node
     public override void _Process(double delta)
     {
     }
+
+    public void OnCatDied()
+    {
+        Godot.Collections.Array<Node> children = GetTree().Root.GetChildren();
+        foreach (Node child in children)
+        {
+            if (child is Box box)
+            {
+                box.QueueFree();
+            }
+        }
+    }
 }

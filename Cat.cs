@@ -3,14 +3,14 @@ using System;
 
 public partial class Cat : CharacterBody2D
 {
-
-    public Vector2 ScreenSize;
+    [Signal]
+    public delegate void DiedEventHandler();
 
     private float _jumpForce = 400f;
 
-    private float _catHeight;
+    private bool _isDead = false;
 
-    private bool _isOnGround = false;
+    private bool _isAnimatingDeath = false;
 
     [Export]
     public float CatSpeed = 90f;
@@ -18,8 +18,6 @@ public partial class Cat : CharacterBody2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        ScreenSize = GetViewportRect().Size;
-        _catHeight = GetNode<CollisionShape2D>("CatShape").Shape.GetRect().Size.Y;
         Vector2 baseVelocity = Velocity;
         baseVelocity.X = CatSpeed;
         Velocity = baseVelocity;
@@ -32,6 +30,19 @@ public partial class Cat : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        if (_isDead)
+        {
+            if (_isAnimatingDeath)
+            {
+                Vector2 deadVelocityUpdate = Velocity;
+                deadVelocityUpdate.Y += Math.Clamp(GetGravity().Y * (float)delta, -1000f, 1000f);
+                Velocity = deadVelocityUpdate;
+                GetNode<AnimatedSprite2D>("Sprite").Rotation += (float)(Math.PI * (float)delta);
+                MoveAndSlide();
+            }
+            return;
+        }
+
         Vector2 velocityUpdate = Velocity;
         velocityUpdate.Y += Math.Clamp(GetGravity().Y * (float)delta, -1000f, 1000f);
         Velocity = velocityUpdate;
@@ -71,6 +82,7 @@ public partial class Cat : CharacterBody2D
     }
     public override void _UnhandledInput(InputEvent @event)
     {
+        if (_isDead) return;
         if (@event.IsActionPressed("jump"))
         {
             GetNode<AnimatedSprite2D>("Sprite").Play("jump");
@@ -82,7 +94,49 @@ public partial class Cat : CharacterBody2D
 
     private void Die()
     {
+        if (_isDead) return;
+        _isDead = true;
         Velocity = Vector2.Zero;
-        GD.Print("Cat died!");
+        SetCollisionLayerValue(1, false);
+        SetCollisionMaskValue(2, false);
+        SetCollisionMaskValue(3, false);
+        BoxSpawner boxSpawner = GetNode<BoxSpawner>("BoxSpawner");
+        boxSpawner.GetNode<Timer>("Timer").Stop();
+        EmitSignal("Died");
+        GetNode<Timer>("DeathAnimationTimer").Start();
+    }
+
+    private void AnimateDeath()
+    {
+        // Translates and rotates the cat to fall off the screen to simulate a death animation
+
+    }
+
+    private void OnDeathAnimationTimerTimeout()
+    {
+        _isAnimatingDeath = true;
+        Velocity = new Vector2(60, 0);
+    }
+
+    public void OnScreenExited()
+    {
+        GetNode<AnimatedSprite2D>("Sprite").Hide();
+        _isAnimatingDeath = false;
+        Velocity = Vector2.Zero;
+    }
+
+    public void Reset()
+    {
+        _isDead = false;
+        _isAnimatingDeath = false;
+        Velocity = Vector2.Zero;
+        Position = new Vector2(100, 200);
+        GetNode<AnimatedSprite2D>("Sprite").Show();
+        GetNode<AnimatedSprite2D>("Sprite").Play("hover");
+        SetCollisionLayerValue(1, true);
+        SetCollisionMaskValue(2, true);
+        SetCollisionMaskValue(3, true);
+        BoxSpawner boxSpawner = GetNode<BoxSpawner>("BoxSpawner");
+        boxSpawner.GetNode<Timer>("Timer").Start();
     }
 }

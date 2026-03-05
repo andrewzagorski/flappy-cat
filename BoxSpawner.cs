@@ -1,8 +1,12 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class BoxSpawner : Node2D
 {
+    [Signal]
+    public delegate void ScoredEventHandler();
+
     [Export]
     public PackedScene BoxScene { get; set; }
 
@@ -47,7 +51,7 @@ public partial class BoxSpawner : Node2D
             Box box = BoxScene.Instantiate<Box>();
             _boxOverlapHeight = box.GetNode<BoxSprite>("BoxSprite").OverlapY * box.Scale.Y;
             box.QueueFree();
-            _maxBoxes = Math.Max(0, (int)Math.Floor((BoxYSpawnRange.Y - BoxYSpawnRange.X) / _boxOverlapHeight) - 2);
+            _maxBoxes = Math.Max(0, (int)Math.Floor((BoxYSpawnRange.Y - BoxYSpawnRange.X) / _boxOverlapHeight) - 3);
             _bottomBoxY = BoxYSpawnRange.Y;
             _topBoxY ??= BoxYSpawnRange.X;
         }
@@ -58,11 +62,12 @@ public partial class BoxSpawner : Node2D
         SetBoxSizeConstants();
 
         ScoreZone scoreZone = ScoreZoneScene.Instantiate<ScoreZone>();
-        scoreZone.GlobalPosition = new Vector2(GlobalPosition.X + _screenSize.X, 0);
-        scoreZone.GetNode<CollisionShape2D>("CollisionShape2D").Shape = new RectangleShape2D() { Size = new Vector2(20, _screenSize.Y) };
+        scoreZone.Scored += OnScored;
         _root.AddChild(scoreZone);
+        scoreZone.GlobalPosition = new Vector2(GlobalPosition.X + 20 + _screenSize.X, 0);
+        scoreZone.GetNode<CollisionShape2D>("CollisionShape2D").Shape = new RectangleShape2D() { Size = new Vector2(60, _screenSize.Y) };
 
-        int numBoxes = (int)Math.Floor(GD.RandRange(0, (double)_maxBoxes));
+        int numBoxes = (int)Math.Floor(GD.RandRange(2, (double)_maxBoxes - 1));
         for (int i = 0; i < numBoxes; i++)
         {
             Box box = BoxScene.Instantiate<Box>();
@@ -71,7 +76,7 @@ public partial class BoxSpawner : Node2D
         }
         if (SpawnTopBoxes)
         {
-            int numTopBoxes = (int)Math.Floor(GD.RandRange(0, (double)(_maxBoxes - numBoxes)));
+            int numTopBoxes = (int)Math.Floor(GD.RandRange(1, (double)(_maxBoxes - numBoxes)));
             for (int i = 0; i < numTopBoxes; i++)
             {
                 Box boxMirror = BoxScene.Instantiate<Box>();
@@ -80,5 +85,10 @@ public partial class BoxSpawner : Node2D
                 _root.AddChild(boxMirror);
             }
         }
+    }
+
+    private void OnScored()
+    {
+        EmitSignal("Scored");
     }
 }

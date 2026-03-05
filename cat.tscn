@@ -124,3 +124,14 @@ limit_bottom = 324
 position = Vector2(-3.4999924, -6)
 scale = Vector2(16, 16)
 shape = SubResource("RectangleShape2D_6fl1u")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=726516211]
+position = Vector2(-3.4999924, -6)
+scale = Vector2(16, 16)
+rect = Rect2(-4.3437505, -3.1875, 8.6875, 6.4375)
+
+[node name="DeathAnimationTimer" type="Timer" parent="." unique_id=908604597]
+one_shot = true
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="OnScreenExited"]
+[connection signal="timeout" from="DeathAnimationTimer" to="." method="OnDeathAnimationTimerTimeout"]

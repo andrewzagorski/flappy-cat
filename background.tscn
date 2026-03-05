@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://esfka6b3l2vk"]
 
-[ext_resource type="Texture2D" uid="uid://col0la5y44xhl" path="res://assets/1.png" id="1_splo0"]
-[ext_resource type="Texture2D" uid="uid://d2rsxbdtq3hep" path="res://assets/2.png" id="2_eq6nc"]
-[ext_resource type="Texture2D" uid="uid://cuhybd8uckmyu" path="res://assets/3.png" id="3_bpugw"]
-[ext_resource type="Texture2D" uid="uid://56eevo0nhe5v" path="res://assets/4.png" id="4_gjjrj"]
+[ext_resource type="Texture2D" uid="uid://bab0xbhr1vj6" path="res://assets/1.png" id="1_splo0"]
+[ext_resource type="Texture2D" uid="uid://b4s43mducn2fd" path="res://assets/2.png" id="2_eq6nc"]
+[ext_resource type="Texture2D" uid="uid://dqkpxx87wp5x4" path="res://assets/3.png" id="3_bpugw"]
+[ext_resource type="Texture2D" uid="uid://d3633n6b12r51" path="res://assets/4.png" id="4_gjjrj"]
 
-[node name="Background" type="Node" unique_id=889350867]
+[node name="Background" type="Node2D" unique_id=214446375]
 
 [node name="Sky" type="Parallax2D" parent="." unique_id=647854502]
 scroll_scale = Vector2(0.1, 1)

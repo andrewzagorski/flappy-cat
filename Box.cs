@@ -11,4 +11,9 @@ public partial class Box : StaticBody2D
     public override void _PhysicsProcess(double delta)
     {
     }
+
+    public void OnScreenExited()
+    {
+        QueueFree();
+    }
 }

@@ -22,3 +22,8 @@ polygon = PackedVector2Array(-8, -5, 0, -9, 8, -5, 8, 5, 0, 9, -8, 5)
 [node name="BoxSprite" type="Sprite2D" parent="." unique_id=244387394]
 texture = SubResource("AtlasTexture_oq5cr")
 script = ExtResource("3_bqn3j")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=411507684]
+rect = Rect2(-8, -9, 16, 18)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="OnScreenExited"]

@@ -1,10 +1,10 @@
 using Godot;
 using System;
 
-public partial class ScoreZone : Area2D
+public partial class Score : Label
 {
-    [Signal]
-    public delegate void ScoredEventHandler();
+    [Export]
+    public int ScoreValue { get; set; }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -16,12 +16,14 @@ public partial class ScoreZone : Area2D
     {
     }
 
-    private void OnBodyEntered(Node2D body)
+    public void AddScore(int points)
     {
-        if (body is Cat && !IsQueuedForDeletion())
-        {
-            EmitSignal("Scored");
-            QueueFree();
-        }
+        ScoreValue += points;
+        Text = ScoreValue.ToString();
+    }
+
+    public void OnBoxSpawnerScored()
+    {
+        AddScore(1);
     }
 }
