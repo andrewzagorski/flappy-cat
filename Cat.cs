@@ -6,11 +6,16 @@ public partial class Cat : CharacterBody2D
     [Signal]
     public delegate void DiedEventHandler();
 
+    [Signal]
+    public delegate void StartedEventHandler();
+
     private float _jumpForce = 400f;
 
     private bool _isDead = false;
 
     private bool _isAnimatingDeath = false;
+
+    private bool _waitingToPlay = true;
 
     [Export]
     public float CatSpeed = 90f;
@@ -18,9 +23,7 @@ public partial class Cat : CharacterBody2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        Vector2 baseVelocity = Velocity;
-        baseVelocity.X = CatSpeed;
-        Velocity = baseVelocity;
+        Hide();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -82,6 +85,15 @@ public partial class Cat : CharacterBody2D
     }
     public override void _UnhandledInput(InputEvent @event)
     {
+        if (_waitingToPlay)
+        {
+            if (@event.IsActionPressed("jump"))
+            {
+                Reset();
+                EmitSignal("Started");
+            }
+            return;
+        }
         if (_isDead) return;
         if (@event.IsActionPressed("jump"))
         {
@@ -106,12 +118,6 @@ public partial class Cat : CharacterBody2D
         GetNode<Timer>("DeathAnimationTimer").Start();
     }
 
-    private void AnimateDeath()
-    {
-        // Translates and rotates the cat to fall off the screen to simulate a death animation
-
-    }
-
     private void OnDeathAnimationTimerTimeout()
     {
         _isAnimatingDeath = true;
@@ -123,14 +129,20 @@ public partial class Cat : CharacterBody2D
         GetNode<AnimatedSprite2D>("Sprite").Hide();
         _isAnimatingDeath = false;
         Velocity = Vector2.Zero;
+        Hide();
+        _waitingToPlay = true;
     }
 
     public void Reset()
     {
         _isDead = false;
         _isAnimatingDeath = false;
-        Velocity = Vector2.Zero;
-        Position = new Vector2(100, 200);
+        _waitingToPlay = false;
+        Show();
+        Vector2 baseVelocity = Velocity;
+        baseVelocity.X = CatSpeed;
+        Velocity = baseVelocity;
+        Position = new Vector2(GetViewport().GetVisibleRect().Size.X / 2, GetViewport().GetVisibleRect().Size.Y - GetNode<AnimatedSprite2D>("Sprite").SpriteFrames.GetFrameTexture("hover", 0).GetHeight() * Scale.Y);
         GetNode<AnimatedSprite2D>("Sprite").Show();
         GetNode<AnimatedSprite2D>("Sprite").Play("hover");
         SetCollisionLayerValue(1, true);

@@ -31,7 +31,7 @@ color = Color(0.08235294, 0.39607844, 0.07058824, 1)
 polygon = PackedVector2Array(1151, 6, -1, 6, -1, 0, 1151, 0)
 
 [node name="Cat" parent="." unique_id=1406705623 instance=ExtResource("2_h2yge")]
-position = Vector2(573, 594)
+position = Vector2(576, 594)
 
 [node name="BoxSpawner" parent="Cat" unique_id=565771170 instance=ExtResource("5_lquwl")]
 position = Vector2(-576, -324)
@@ -43,5 +43,22 @@ SpawnTopBoxes = true
 offset_right = 41.0
 offset_bottom = 99.0
 
+[node name="InfoLabel" type="Label" parent="UI" unique_id=1449185118]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -342.0
+offset_top = -49.5
+offset_right = 342.0
+offset_bottom = 49.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.38039216, 0.011764706, 1)
+theme_override_font_sizes/font_size = 72
+text = "Press Space to play!"
+
 [connection signal="Died" from="Cat" to="." method="OnCatDied"]
+[connection signal="Started" from="Cat" to="." method="OnGameStarted"]
 [connection signal="Scored" from="Cat/BoxSpawner" to="UI/Score" method="OnBoxSpawnerScored"]

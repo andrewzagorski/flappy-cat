@@ -24,5 +24,20 @@ public partial class Main : Node
                 box.QueueFree();
             }
         }
+
+
+        Label infoLabel = GetNode<CanvasLayer>("UI").GetNode<Label>("InfoLabel");
+        Score score = GetNode<CanvasLayer>("UI").GetNode<Score>("Score");
+        score.Hide();
+        infoLabel.Text = "Game Over. Score: " + score.ScoreValue;
+        infoLabel.Show();
+    }
+
+    public void OnGameStarted()
+    {
+        GetNode<CanvasLayer>("UI").GetNode<Label>("InfoLabel").Hide();
+        Score score = GetNode<CanvasLayer>("UI").GetNode<Score>("Score");
+        score.ResetScore();
+        score.Show();
     }
 }

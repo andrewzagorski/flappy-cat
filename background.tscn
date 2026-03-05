@@ -2,7 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://bab0xbhr1vj6" path="res://assets/1.png" id="1_splo0"]
 [ext_resource type="Texture2D" uid="uid://b4s43mducn2fd" path="res://assets/2.png" id="2_eq6nc"]
-[ext_resource type="Texture2D" uid="uid://dqkpxx87wp5x4" path="res://assets/3.png" id="3_bpugw"]
 [ext_resource type="Texture2D" uid="uid://d3633n6b12r51" path="res://assets/4.png" id="4_gjjrj"]
 
 [node name="Background" type="Node2D" unique_id=214446375]
@@ -12,33 +11,24 @@ scroll_scale = Vector2(0.1, 1)
 repeat_size = Vector2(1152, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="Sky" unique_id=634459231]
-position = Vector2(580.25, 320)
-scale = Vector2(2.0130205, 1.9753087)
+position = Vector2(575.99994, 324)
+scale = Vector2(1.9999995, 1.9999999)
 texture = ExtResource("1_splo0")
 
 [node name="BackClouds" type="Parallax2D" parent="." unique_id=1722004987]
-scroll_scale = Vector2(0.1, 1)
+scroll_scale = Vector2(0.15, 1)
 repeat_size = Vector2(1152, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="BackClouds" unique_id=2059256198]
-position = Vector2(576, 321)
-scale = Vector2(2, 1.9814814)
+position = Vector2(576, 322.5)
+scale = Vector2(2, 2.0092592)
 texture = ExtResource("2_eq6nc")
 
-[node name="Chemtrail" type="Parallax2D" parent="." unique_id=195492558]
+[node name="ForeClouds" type="Parallax2D" parent="." unique_id=698289195]
 scroll_scale = Vector2(0.1, 1)
 repeat_size = Vector2(1152, 0)
 
-[node name="Sprite2D" type="Sprite2D" parent="Chemtrail" unique_id=1493663722]
-position = Vector2(576.5, 321)
-scale = Vector2(1.9982641, 1.9814813)
-texture = ExtResource("3_bpugw")
-
-[node name="ForeClouds" type="Parallax2D" parent="." unique_id=698289195]
-scroll_scale = Vector2(0.05, 1)
-repeat_size = Vector2(1152, 0)
-
 [node name="Sprite2D" type="Sprite2D" parent="ForeClouds" unique_id=1378959713]
-position = Vector2(580, 321)
-scale = Vector2(2.0138886, 1.9814814)
+position = Vector2(576.00006, 324.00003)
+scale = Vector2(2, 2.0000002)
 texture = ExtResource("4_gjjrj")

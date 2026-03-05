@@ -26,4 +26,10 @@ public partial class Score : Label
     {
         AddScore(1);
     }
+
+    public void ResetScore()
+    {
+        ScoreValue = 0;
+        Text = ScoreValue.ToString();
+    }
 }
