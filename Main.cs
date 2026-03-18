@@ -16,13 +16,12 @@ public partial class Main : Node
 
     public void OnCatDied()
     {
-        Godot.Collections.Array<Node> children = GetTree().Root.GetChildren();
-        foreach (Node child in children)
+        GetNode<BoxSpawner>("BoxSpawner").StopSpawning();
+
+        Node obstaclesContainer = GetNode<Node>("ObstaclesContainer");
+        foreach (Node child in obstaclesContainer.GetChildren())
         {
-            if (child is Box box)
-            {
-                box.QueueFree();
-            }
+            child.QueueFree();
         }
 
 
@@ -36,5 +35,6 @@ public partial class Main : Node
         _infoLabel.Hide();
         _score.ResetScore();
         _score.Show();
+        GetNode<BoxSpawner>("BoxSpawner").StartSpawning();
     }
 }

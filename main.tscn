@@ -33,9 +33,13 @@ polygon = PackedVector2Array(1151, 6, -1, 6, -1, 0, 1151, 0)
 [node name="Cat" parent="." unique_id=1406705623 instance=ExtResource("2_h2yge")]
 position = Vector2(576, 594)
 
-[node name="BoxSpawner" parent="Cat" unique_id=565771170 instance=ExtResource("5_lquwl")]
-position = Vector2(-576, -324)
+[node name="BoxSpawner" parent="." unique_id=565771170 node_paths=PackedStringArray("ObstaclesContainer", "PlayerCat") instance=ExtResource("5_lquwl")]
+position = Vector2(0, 270)
 SpawnTopBoxes = true
+ObstaclesContainer = NodePath("../ObstaclesContainer")
+PlayerCat = NodePath("../Cat")
+
+[node name="ObstaclesContainer" type="Node" parent="." unique_id=381776468]
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1719590561]
 
@@ -61,4 +65,4 @@ text = "Press Space to play!"
 
 [connection signal="Died" from="Cat" to="." method="OnCatDied"]
 [connection signal="Started" from="Cat" to="." method="OnGameStarted"]
-[connection signal="Scored" from="Cat/BoxSpawner" to="UI/Score" method="OnBoxSpawnerScored"]
+[connection signal="Scored" from="BoxSpawner" to="UI/Score" method="OnBoxSpawnerScored"]

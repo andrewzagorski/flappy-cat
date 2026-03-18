@@ -18,12 +18,37 @@ public partial class BoxSpawner : Node2D
     [Export]
     public Vector2 BoxYSpawnRange { get; set; }
 
+    [Export]
+    public Node ObstaclesContainer { get; set; }
+
+    [Export]
+    public Cat PlayerCat { get; set; }
+
+    public void StartSpawning()
+    {
+        GetNode<Timer>("Timer").Start();
+    }
+
+    public void StopSpawning()
+    {
+        GetNode<Timer>("Timer").Stop();
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        if (PlayerCat != null)
+        {
+            GlobalPosition = new Vector2(PlayerCat.GlobalPosition.X, GlobalPosition.Y);
+        }
+    }
+
     private Node _root;
 
     private Vector2 _screenSize;
 
-    private float _boxOverlapHeight;
     private int _maxBoxes;
+
+    private float _boxOverlapHeight;
     private float _bottomBoxY;
     private float? _topBoxY = null;
 
@@ -35,29 +60,21 @@ public partial class BoxSpawner : Node2D
             BoxYSpawnRange = new Vector2(0, GetViewportRect().Size.Y);
         }
         _screenSize = GetViewportRect().Size;
-        _root = GetTree().Root;
-    }
 
-    private void SetBoxSizeConstants()
-    {
-        if (_boxOverlapHeight == 0)
-        {
-            Box box = BoxScene.Instantiate<Box>();
-            _boxOverlapHeight = box.GetNode<BoxSprite>("BoxSprite").OverlapY * box.Scale.Y;
-            box.QueueFree();
-            _maxBoxes = Math.Max(0, (int)Math.Floor((BoxYSpawnRange.Y - BoxYSpawnRange.X) / _boxOverlapHeight) - 3);
-            _bottomBoxY = BoxYSpawnRange.Y;
-            _topBoxY ??= BoxYSpawnRange.X;
-        }
+        Box tempBox = BoxScene.Instantiate<Box>();
+        _boxOverlapHeight = tempBox.GetNode<BoxSprite>("BoxSprite").OverlapY * tempBox.Scale.Y;
+        tempBox.QueueFree();
+
+        _maxBoxes = Math.Max(0, (int)Math.Floor((BoxYSpawnRange.Y - BoxYSpawnRange.X) / _boxOverlapHeight) - 3);
+        _bottomBoxY = BoxYSpawnRange.Y;
+        _topBoxY ??= BoxYSpawnRange.X;
     }
 
     private void OnTimerTimeout()
     {
-        SetBoxSizeConstants();
-
         ScoreZone scoreZone = ScoreZoneScene.Instantiate<ScoreZone>();
         scoreZone.Scored += OnScored;
-        _root.AddChild(scoreZone);
+        ObstaclesContainer.AddChild(scoreZone);
         scoreZone.GlobalPosition = new Vector2(GlobalPosition.X + 20 + _screenSize.X, 0);
         scoreZone.GetNode<CollisionShape2D>("CollisionShape2D").Shape = new RectangleShape2D() { Size = new Vector2(60, _screenSize.Y) };
 
@@ -66,7 +83,7 @@ public partial class BoxSpawner : Node2D
         {
             Box box = BoxScene.Instantiate<Box>();
             box.GlobalPosition = new Vector2(GlobalPosition.X + _screenSize.X, _bottomBoxY - i * _boxOverlapHeight);
-            _root.AddChild(box);
+            ObstaclesContainer.AddChild(box);
         }
         if (SpawnTopBoxes)
         {
@@ -76,7 +93,7 @@ public partial class BoxSpawner : Node2D
                 Box boxMirror = BoxScene.Instantiate<Box>();
                 boxMirror.GlobalPosition = new Vector2(GlobalPosition.X + _screenSize.X, _topBoxY.Value + i * _boxOverlapHeight);
                 boxMirror.Scale *= new Vector2(1, -1);
-                _root.AddChild(boxMirror);
+                ObstaclesContainer.AddChild(boxMirror);
             }
         }
     }

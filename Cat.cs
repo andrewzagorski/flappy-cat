@@ -110,8 +110,6 @@ public partial class Cat : CharacterBody2D
         SetCollisionLayerValue(PhysicsLayer.Cat, false);
         SetCollisionMaskValue(PhysicsLayer.Box, false);
         SetCollisionMaskValue(PhysicsLayer.Ground, false);
-        BoxSpawner boxSpawner = GetNode<BoxSpawner>("BoxSpawner");
-        boxSpawner.GetNode<Timer>("Timer").Stop();
         EmitSignal(SignalName.Died);
         GetNode<Timer>("DeathAnimationTimer").Start();
     }
@@ -145,7 +143,5 @@ public partial class Cat : CharacterBody2D
         SetCollisionLayerValue(PhysicsLayer.Cat, true);
         SetCollisionMaskValue(PhysicsLayer.Box, true);
         SetCollisionMaskValue(PhysicsLayer.Ground, true);
-        BoxSpawner boxSpawner = GetNode<BoxSpawner>("BoxSpawner");
-        boxSpawner.GetNode<Timer>("Timer").Start();
     }
 }
