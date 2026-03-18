@@ -1,17 +1,17 @@
 using Godot;
-using System;
 
 public partial class Main : Node
 {
 
+    private Label _infoLabel;
+    private Score _score;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
+        CanvasLayer ui = GetNode<CanvasLayer>("UI");
+        _infoLabel = ui.GetNode<Label>("InfoLabel");
+        _score = ui.GetNode<Score>("Score");
     }
 
     public void OnCatDied()
@@ -26,18 +26,15 @@ public partial class Main : Node
         }
 
 
-        Label infoLabel = GetNode<CanvasLayer>("UI").GetNode<Label>("InfoLabel");
-        Score score = GetNode<CanvasLayer>("UI").GetNode<Score>("Score");
-        score.Hide();
-        infoLabel.Text = "Game Over. Score: " + score.ScoreValue;
-        infoLabel.Show();
+        _score.Hide();
+        _infoLabel.Text = "Game Over. Score: " + _score.ScoreValue;
+        _infoLabel.Show();
     }
 
     public void OnGameStarted()
     {
-        GetNode<CanvasLayer>("UI").GetNode<Label>("InfoLabel").Hide();
-        Score score = GetNode<CanvasLayer>("UI").GetNode<Score>("Score");
-        score.ResetScore();
-        score.Show();
+        _infoLabel.Hide();
+        _score.ResetScore();
+        _score.Show();
     }
 }

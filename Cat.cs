@@ -9,47 +9,45 @@ public partial class Cat : CharacterBody2D
     [Signal]
     public delegate void StartedEventHandler();
 
-    private float _jumpForce = 400f;
+    [Export]
+    public float JumpForce { get; set; } = 400f;
 
-    private bool _isDead = false;
+    private enum CatState { _waitingToPlay, _playing, _dead, _animatingDeath }
 
-    private bool _isAnimatingDeath = false;
-
-    private bool _waitingToPlay = true;
+    private CatState _currentState = CatState._waitingToPlay;
 
     [Export]
-    public float CatSpeed = 90f;
+    public float CatSpeed { get; set; } = 90f;
+
+    private AnimatedSprite2D _sprite;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        _sprite = GetNode<AnimatedSprite2D>("Sprite");
         Hide();
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (_isDead)
+        if (_currentState == CatState._dead)
         {
-            if (_isAnimatingDeath)
-            {
-                Vector2 deadVelocityUpdate = Velocity;
-                deadVelocityUpdate.Y += Math.Clamp(GetGravity().Y * (float)delta, -1000f, 1000f);
-                Velocity = deadVelocityUpdate;
-                GetNode<AnimatedSprite2D>("Sprite").Rotation += (float)(Math.PI * (float)delta);
-                MoveAndSlide();
-            }
             return;
+        }
+
+        if (_currentState == CatState._animatingDeath)
+        {
+            Vector2 deadVelocityUpdate = Velocity;
+            deadVelocityUpdate.Y += Math.Clamp(GetGravity().Y * (float)delta, -1000f, 1000f);
+            Velocity = deadVelocityUpdate;
+            _sprite.Rotation += (float)(Math.PI * (float)delta);
+            MoveAndSlide();
         }
 
         Vector2 velocityUpdate = Velocity;
         velocityUpdate.Y += Math.Clamp(GetGravity().Y * (float)delta, -1000f, 1000f);
         Velocity = velocityUpdate;
-        GetNode<AnimatedSprite2D>("Sprite").Rotation = (float)(Math.PI / 2 * Velocity.Y / 1000.0);
+        _sprite.Rotation = (float)(Math.PI / 2 * Velocity.Y / 1000.0);
 
         MoveAndSlide();
 
@@ -71,7 +69,7 @@ public partial class Cat : CharacterBody2D
             {
                 velocityUpdate.Y = 0;
                 Velocity = velocityUpdate;
-                GetNode<AnimatedSprite2D>("Sprite").Play("run");
+                _sprite.Play("run");
             }
             else if (collider.IsInGroup("boxes"))
             {
@@ -80,74 +78,73 @@ public partial class Cat : CharacterBody2D
         }
         if (Velocity.Y > 0)
         {
-            GetNode<AnimatedSprite2D>("Sprite").Play("hover");
+            _sprite.Play("hover");
         }
     }
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (_waitingToPlay)
+        if (_currentState == CatState._waitingToPlay)
         {
             if (@event.IsActionPressed("jump"))
             {
                 Reset();
-                EmitSignal("Started");
+                EmitSignal(SignalName.Started);
             }
             return;
         }
-        if (_isDead) return;
+        if (_currentState == CatState._dead) return;
         if (@event.IsActionPressed("jump"))
         {
-            GetNode<AnimatedSprite2D>("Sprite").Play("jump");
+            _sprite.Play("jump");
             Vector2 velocityUpdate = Velocity;
-            velocityUpdate.Y -= _jumpForce;
+            velocityUpdate.Y -= JumpForce;
             Velocity = velocityUpdate;
         }
     }
 
     private void Die()
     {
-        if (_isDead) return;
-        _isDead = true;
+        if (_currentState == CatState._dead) return;
+        _currentState = CatState._dead;
         Velocity = Vector2.Zero;
-        SetCollisionLayerValue(1, false);
-        SetCollisionMaskValue(2, false);
-        SetCollisionMaskValue(3, false);
+        SetCollisionLayerValue(PhysicsLayer.Cat, false);
+        SetCollisionMaskValue(PhysicsLayer.Box, false);
+        SetCollisionMaskValue(PhysicsLayer.Ground, false);
         BoxSpawner boxSpawner = GetNode<BoxSpawner>("BoxSpawner");
         boxSpawner.GetNode<Timer>("Timer").Stop();
-        EmitSignal("Died");
+        EmitSignal(SignalName.Died);
         GetNode<Timer>("DeathAnimationTimer").Start();
     }
 
     private void OnDeathAnimationTimerTimeout()
     {
-        _isAnimatingDeath = true;
+        _currentState = CatState._animatingDeath;
         Velocity = new Vector2(60, 0);
     }
 
     public void OnScreenExited()
     {
-        GetNode<AnimatedSprite2D>("Sprite").Hide();
-        _isAnimatingDeath = false;
+        _sprite.Hide();
+        _currentState = CatState._waitingToPlay;
         Velocity = Vector2.Zero;
         Hide();
-        _waitingToPlay = true;
     }
 
     public void Reset()
     {
-        _isDead = false;
-        _isAnimatingDeath = false;
-        _waitingToPlay = false;
+        _currentState = CatState._playing;
         Show();
         Vector2 baseVelocity = Velocity;
         baseVelocity.X = CatSpeed;
         Velocity = baseVelocity;
-        Position = new Vector2(GetViewport().GetVisibleRect().Size.X / 2, GetViewport().GetVisibleRect().Size.Y - GetNode<AnimatedSprite2D>("Sprite").SpriteFrames.GetFrameTexture("hover", 0).GetHeight() * Scale.Y);
-        GetNode<AnimatedSprite2D>("Sprite").Show();
-        GetNode<AnimatedSprite2D>("Sprite").Play("hover");
-        SetCollisionLayerValue(1, true);
-        SetCollisionMaskValue(2, true);
-        SetCollisionMaskValue(3, true);
+        Vector2 viewSize = GetViewport().GetVisibleRect().Size;
+        float spriteHeight = _sprite.SpriteFrames.GetFrameTexture("hover", 0).GetHeight();
+        Position = new Vector2(viewSize.X / 2, viewSize.Y - spriteHeight * Scale.Y);
+        _sprite.Show();
+        _sprite.Play("hover");
+        SetCollisionLayerValue(PhysicsLayer.Cat, true);
+        SetCollisionMaskValue(PhysicsLayer.Box, true);
+        SetCollisionMaskValue(PhysicsLayer.Ground, true);
         BoxSpawner boxSpawner = GetNode<BoxSpawner>("BoxSpawner");
         boxSpawner.GetNode<Timer>("Timer").Start();
     }

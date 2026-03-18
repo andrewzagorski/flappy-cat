@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 
 public partial class BoxSpawner : Node2D
 {
@@ -37,11 +36,6 @@ public partial class BoxSpawner : Node2D
         }
         _screenSize = GetViewportRect().Size;
         _root = GetTree().Root;
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
     }
 
     private void SetBoxSizeConstants()
@@ -89,6 +83,6 @@ public partial class BoxSpawner : Node2D
 
     private void OnScored()
     {
-        EmitSignal("Scored");
+        EmitSignal(SignalName.Scored);
     }
 }
